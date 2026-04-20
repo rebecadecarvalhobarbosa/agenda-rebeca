@@ -4,124 +4,103 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agenda Rebeca</title>
-<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Agenda Rebeca">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #ffffff; --bg2: #f5f5f3; --bg3: #eeecea;
-    --text: #1a1a18; --text2: #6b6b67; --text3: #a0a09c;
-    --border: rgba(0,0,0,0.10); --border2: rgba(0,0,0,0.18);
-    --blue-bg: #E6F1FB; --blue: #185FA5;
-    --green-bg: #EAF3DE; --green: #3B6D11;
-    --red-bg: #FCEBEB; --red: #A32D2D;
-    --amber-bg: #FAEEDA; --amber: #854F0B;
-    --radius: 8px; --radius-lg: 12px;
-    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #1c1c1a; --bg2: #252523; --bg3: #2e2e2b;
-      --text: #f0ede8; --text2: #9a9a94; --text3: #5a5a56;
-      --border: rgba(255,255,255,0.10); --border2: rgba(255,255,255,0.18);
-      --blue-bg: #0c2a45; --blue: #85B7EB;
-      --green-bg: #172a08; --green: #97C459;
-      --red-bg: #2d1010; --red: #F09595;
-      --amber-bg: #2d1f05; --amber: #EF9F27;
-    }
-  }
-  body { font-family: var(--font); background: var(--bg3); color: var(--text); min-height: 100vh; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f3; color: #1a1a18; min-height: 100vh; }
   .app { max-width: 820px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
   .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; gap: 12px; flex-wrap: wrap; }
-  .header h1 { font-size: 22px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
+  .header h1 { font-size: 18px; font-weight: 500; color: #1a1a18; }
   .header-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-  .btn { font-size: 13px; padding: 7px 14px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: var(--bg); color: var(--text); cursor: pointer; font-family: var(--font); transition: background 0.1s; }
-  .btn:hover { background: var(--bg2); }
-  .btn-add { background: var(--blue-bg); color: var(--blue); border-color: var(--blue); }
-  .btn-export { background: var(--green-bg); color: var(--green); border-color: var(--green); }
-  .btn-sync { background: var(--amber-bg); color: var(--amber); border-color: var(--amber); display: flex; align-items: center; gap: 6px; }
+  .btn { font-size: 13px; padding: 6px 14px; border-radius: 8px; border: 0.5px solid rgba(0,0,0,0.18); background: #ffffff; color: #1a1a18; cursor: pointer; font-family: inherit; }
+  .btn:hover { background: #f0ede8; }
+  .btn-add { background: #E6F1FB; color: #185FA5; border-color: #185FA5; }
+  .btn-export { background: #EAF3DE; color: #3B6D11; border-color: #3B6D11; }
+  .btn-sync { background: #FAEEDA; color: #854F0B; border-color: #854F0B; }
+  .btn-login { background: #E6F1FB; color: #185FA5; border-color: #185FA5; font-weight: 500; }
   .btn-sync:disabled { opacity: 0.55; cursor: default; }
-  .sync-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; font-size: 12px; color: var(--text2); }
-  .sync-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: var(--text3); }
+  .sync-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; font-size: 12px; color: #6b6b67; }
+  .sync-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: #a0a09c; }
   .sync-dot.ok { background: #639922; }
   .sync-dot.syncing { background: #BA7517; animation: pulse 1s infinite; }
   .sync-dot.error { background: #E24B4A; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .login-banner { background: #E6F1FB; border: 0.5px solid #185FA5; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .login-banner p { font-size: 14px; color: #185FA5; }
+  .login-banner p strong { font-weight: 500; }
   .search-bar { margin-bottom: 1rem; }
-  .search-bar input { width: 100%; font-size: 14px; padding: 9px 14px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: var(--bg); color: var(--text); font-family: var(--font); }
-  .search-bar input:focus { outline: 2px solid var(--blue); outline-offset: -1px; }
+  .search-bar input { width: 100%; font-size: 14px; padding: 7px 12px; border-radius: 8px; border: 0.5px solid rgba(0,0,0,0.18); background: #ffffff; color: #1a1a18; font-family: inherit; }
+  .search-bar input:focus { outline: none; border-color: rgba(0,0,0,0.4); }
   .clients-grid { display: flex; flex-direction: column; gap: 12px; }
-  .client-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; transition: box-shadow 0.15s, opacity 0.15s; }
+  .client-card { background: #ffffff; border: 0.5px solid rgba(0,0,0,0.10); border-radius: 12px; overflow: hidden; transition: box-shadow 0.15s, opacity 0.15s; }
   .client-card.has-pending { border-left: 3px solid #E24B4A; }
   .client-card.dragging { opacity: 0.4; }
-  .client-card.drag-over { box-shadow: 0 0 0 2px var(--blue); }
-  .card-header { display: flex; align-items: center; gap: 10px; padding: 13px 16px; user-select: none; }
-  .drag-handle { display: flex; flex-direction: column; gap: 3.5px; padding: 4px 3px; cursor: grab; flex-shrink: 0; opacity: 0.3; }
-  .drag-handle:hover { opacity: 0.65; }
-  .drag-handle span { display: block; width: 15px; height: 1.5px; background: var(--text); border-radius: 2px; }
+  .client-card.drag-over { box-shadow: 0 0 0 2px #185FA5; }
+  .card-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; user-select: none; }
+  .drag-handle { display: flex; flex-direction: column; gap: 3px; padding: 4px 2px; cursor: grab; flex-shrink: 0; opacity: 0.35; }
+  .drag-handle:hover { opacity: 0.7; }
+  .drag-handle span { display: block; width: 14px; height: 1.5px; background: #1a1a18; border-radius: 2px; }
   .card-header-click { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; cursor: pointer; }
+  .card-header-click:hover .client-name { color: #185FA5; }
   .status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
   .status-dot.pending { background: #E24B4A; box-shadow: 0 0 0 3px rgba(226,75,74,0.18); }
   .status-dot.ok { background: #639922; }
-  .client-name { font-size: 15px; font-weight: 600; color: var(--text); }
-  .client-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 3px; }
-  .client-agency { font-size: 13px; color: var(--text2); }
+  .client-name { font-size: 15px; font-weight: 500; color: #1a1a18; transition: color 0.1s; }
+  .client-meta { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 2px; }
+  .client-agency { font-size: 13px; color: #6b6b67; }
   .destino-badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
-  .toggle-icon { font-size: 11px; color: var(--text3); margin-left: 4px; flex-shrink: 0; transition: transform 0.2s; }
+  .toggle-icon { font-size: 12px; color: #a0a09c; transition: transform 0.2s; margin-left: 4px; flex-shrink: 0; }
   .toggle-icon.open { transform: rotate(180deg); }
   .move-btns { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
-  .move-btn { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 11px; padding: 2px 4px; line-height: 1; }
-  .move-btn:hover { color: var(--text); }
+  .move-btn { background: none; border: none; color: #a0a09c; cursor: pointer; font-size: 11px; padding: 1px 3px; line-height: 1; }
+  .move-btn:hover { color: #1a1a18; }
   .move-btn:disabled { opacity: 0.15; cursor: default; }
-  .card-body { padding: 0 16px 18px; display: none; }
+  .card-body { padding: 0 16px 16px; display: none; }
   .card-body.open { display: block; }
-  .card-body-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; margin-top: 14px; }
-  .field-group { display: flex; flex-direction: column; gap: 5px; }
+  .card-body-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .field-group { display: flex; flex-direction: column; gap: 4px; }
   .field-group.full { grid-column: 1 / -1; }
-  .field-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
-  .field-input { font-size: 13px; padding: 7px 10px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: var(--bg2); color: var(--text); font-family: var(--font); width: 100%; }
-  .field-input:focus { outline: 2px solid var(--blue); outline-offset: -1px; background: var(--bg); }
-  textarea.field-input { resize: vertical; min-height: 64px; line-height: 1.6; }
+  .field-label { font-size: 11px; color: #a0a09c; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; }
+  .field-input { font-size: 13px; padding: 6px 10px; border-radius: 8px; border: 0.5px solid rgba(0,0,0,0.18); background: #f5f5f3; color: #1a1a18; font-family: inherit; width: 100%; }
+  .field-input:focus { outline: none; border-color: rgba(0,0,0,0.4); background: #ffffff; }
+  textarea.field-input { resize: vertical; min-height: 60px; line-height: 1.5; }
   .fat-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
   .fat-month { display: flex; flex-direction: column; gap: 3px; }
-  .fat-month label { font-size: 10px; color: var(--text3); text-align: center; font-weight: 600; text-transform: uppercase; }
-  .fat-month input { text-align: center; font-size: 12px; padding: 6px 3px; }
-  .fat-total { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text2); background: var(--bg2); border-radius: var(--radius); padding: 7px 12px; margin-top: 8px; }
-  .fat-total strong { color: var(--text); }
-  .destino-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
-  .destino-tag { font-size: 12px; padding: 4px 11px; border-radius: 20px; cursor: pointer; border: 0.5px solid var(--border2); background: var(--bg2); color: var(--text2); user-select: none; transition: all 0.1s; }
-  .destino-tag.selected { border-color: var(--blue); background: var(--blue-bg); color: var(--blue); font-weight: 600; }
-  .destino-tag:hover { border-color: var(--blue); }
-  .custom-destino { display: flex; gap: 7px; margin-top: 8px; }
-  .custom-destino input { flex: 1; font-size: 13px; padding: 6px 10px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: var(--bg2); color: var(--text); font-family: var(--font); }
-  .custom-destino button { font-size: 12px; padding: 5px 12px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: none; color: var(--text2); cursor: pointer; font-family: var(--font); }
-  .custom-destino button:hover { background: var(--bg2); }
-  .tasks-area { display: flex; flex-direction: column; gap: 7px; }
-  .task-item { display: flex; align-items: center; gap: 9px; }
-  .task-item input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; accent-color: #639922; }
-  .task-item input[type=text] { flex: 1; font-size: 13px; padding: 6px 9px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: var(--bg2); color: var(--text); font-family: var(--font); }
-  .task-item input[type=text]:focus { outline: 2px solid var(--blue); outline-offset: -1px; }
-  .task-item.done input[type=text] { text-decoration: line-through; color: var(--text3); }
-  .task-rm { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 16px; padding: 0 3px; line-height: 1; }
+  .fat-month label { font-size: 10px; color: #a0a09c; text-align: center; }
+  .fat-month input { text-align: center; font-size: 12px; padding: 5px 4px; }
+  .fat-total { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #6b6b67; background: #f5f5f3; border-radius: 8px; padding: 6px 10px; margin-top: 6px; }
+  .fat-total strong { color: #1a1a18; }
+  .destino-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .destino-tag { font-size: 12px; padding: 4px 10px; border-radius: 20px; cursor: pointer; border: 0.5px solid rgba(0,0,0,0.18); background: #f5f5f3; color: #6b6b67; user-select: none; }
+  .destino-tag.selected { border-color: #185FA5; background: #E6F1FB; color: #185FA5; font-weight: 500; }
+  .destino-tag:hover { border-color: rgba(0,0,0,0.4); }
+  .custom-destino { display: flex; gap: 6px; margin-top: 6px; }
+  .custom-destino input { flex: 1; font-size: 13px; padding: 5px 8px; border-radius: 8px; border: 0.5px solid rgba(0,0,0,0.18); background: #f5f5f3; color: #1a1a18; font-family: inherit; }
+  .custom-destino button { font-size: 12px; padding: 4px 10px; border-radius: 8px; border: 0.5px solid rgba(0,0,0,0.18); background: none; color: #6b6b67; cursor: pointer; font-family: inherit; }
+  .custom-destino button:hover { background: #f5f5f3; }
+  .tasks-area { display: flex; flex-direction: column; gap: 6px; }
+  .task-item { display: flex; align-items: center; gap: 8px; }
+  .task-item input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; flex-shrink: 0; accent-color: #639922; }
+  .task-item input[type=text] { flex: 1; font-size: 13px; padding: 5px 8px; border-radius: 8px; border: 0.5px solid rgba(0,0,0,0.18); background: #f5f5f3; color: #1a1a18; font-family: inherit; }
+  .task-item input[type=text]:focus { outline: none; border-color: rgba(0,0,0,0.4); background: #ffffff; }
+  .task-item.done input[type=text] { text-decoration: line-through; color: #a0a09c; }
+  .task-rm { background: none; border: none; color: #a0a09c; cursor: pointer; font-size: 15px; padding: 0 2px; line-height: 1; }
   .task-rm:hover { color: #E24B4A; }
-  .add-task-btn { font-size: 12px; padding: 5px 11px; border-radius: var(--radius); border: 0.5px dashed var(--border2); background: none; color: var(--text2); cursor: pointer; font-family: var(--font); align-self: flex-start; margin-top: 3px; }
-  .add-task-btn:hover { background: var(--bg2); }
-  .card-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; padding-top: 13px; border-top: 0.5px solid var(--border); }
-  .btn-save { font-size: 12px; padding: 6px 16px; border-radius: var(--radius); border: 0.5px solid var(--blue); background: var(--blue-bg); color: var(--blue); cursor: pointer; font-family: var(--font); font-weight: 600; }
-  .btn-del { font-size: 12px; padding: 6px 12px; border-radius: var(--radius); border: 0.5px solid #E24B4A; background: none; color: #E24B4A; cursor: pointer; font-family: var(--font); }
-  .empty { text-align: center; padding: 3rem; color: var(--text2); font-size: 14px; }
-  .loading { text-align: center; padding: 3rem; color: var(--text2); font-size: 14px; }
-  .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid var(--border2); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 8px; vertical-align: middle; }
+  .add-task-btn { font-size: 12px; padding: 4px 10px; border-radius: 8px; border: 0.5px dashed rgba(0,0,0,0.18); background: none; color: #6b6b67; cursor: pointer; font-family: inherit; align-self: flex-start; margin-top: 2px; }
+  .add-task-btn:hover { background: #f5f5f3; }
+  .card-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 0.5px solid rgba(0,0,0,0.10); }
+  .btn-save { font-size: 12px; padding: 5px 14px; border-radius: 8px; border: 0.5px solid #185FA5; background: #E6F1FB; color: #185FA5; cursor: pointer; font-family: inherit; }
+  .btn-del { font-size: 12px; padding: 5px 12px; border-radius: 8px; border: 0.5px solid #E24B4A; background: none; color: #E24B4A; cursor: pointer; font-family: inherit; }
+  .empty { text-align: center; padding: 2.5rem; color: #6b6b67; font-size: 14px; }
+  .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(0,0,0,0.12); border-top-color: #185FA5; border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 8px; vertical-align: middle; }
   @keyframes spin { to { transform: rotate(360deg); } }
   @media (max-width: 540px) {
     .card-body-inner { grid-template-columns: 1fr; }
     .field-group.full { grid-column: 1; }
     .fat-row { grid-template-columns: repeat(3, 1fr); }
-    .header h1 { font-size: 18px; }
   }
 </style>
 </head>
@@ -137,17 +116,26 @@
   </div>
   <div class="sync-bar">
     <span class="sync-dot" id="sync-dot"></span>
-    <span id="sync-msg">Conectando ao Google Drive...</span>
+    <span id="sync-msg"><span class="spinner"></span>Iniciando...</span>
+  </div>
+  <div id="login-banner" style="display:none" class="login-banner">
+    <p><strong>Conecte sua conta Google</strong> para sincronizar os dados entre todos os seus dispositivos.</p>
+    <button class="btn btn-login" onclick="doLogin()">Entrar com Google</button>
   </div>
   <div class="search-bar">
     <input type="text" id="search" placeholder="Buscar cliente, agência ou destino..." oninput="renderList()">
   </div>
   <div class="clients-grid" id="clients-grid">
-    <div class="loading"><span class="spinner"></span>Carregando dados...</div>
+    <div class="empty"><span class="spinner"></span>Carregando...</div>
   </div>
 </div>
 
 <script>
+const CLIENT_ID = '505705256831-b36eubjibrmobdd0pdm606cslnt20h21.apps.googleusercontent.com';
+const REDIRECT_URI = 'https://rebecadecarvalhobarbosa.github.io/agenda-rebeca/';
+const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+const DRIVE_FILE = 'agenda_rebeca_dados.json';
+
 const MESES=[
   {k:'jan',l:'Janeiro'},{k:'fev',l:'Fevereiro'},{k:'mar',l:'Março'},
   {k:'abr',l:'Abril'},{k:'mai',l:'Maio'},{k:'jun',l:'Junho'},
@@ -158,14 +146,9 @@ const MESES_S1=MESES.slice(0,6), MESES_S2=MESES.slice(6,12);
 const DESTINOS_PADRAO=['Nova York','Paris','Lisboa','Califórnia','Miami','Londres','México','Espanha','Dubai','Cancún','Roma','Tokyo','Orlando','Buenos Aires','Maldivas'];
 const BADGE_COLORS={'Nova York':'#185FA5','Paris':'#993556','Lisboa':'#3B6D11','Califórnia':'#854F0B','Miami':'#0F6E56','Londres':'#534AB7','México':'#3B6D11','Espanha':'#993C1D','Dubai':'#BA7517','Cancún':'#0F6E56','Roma':'#993C1D','Tokyo':'#993556','Orlando':'#185FA5','Buenos Aires':'#534AB7','Maldivas':'#0F6E56'};
 const BADGE_BG={'Nova York':'#E6F1FB','Paris':'#FBEAF0','Lisboa':'#EAF3DE','Califórnia':'#FAEEDA','Miami':'#E1F5EE','Londres':'#EEEDFE','México':'#EAF3DE','Espanha':'#FAECE7','Dubai':'#FAEEDA','Cancún':'#E1F5EE','Roma':'#FAECE7','Tokyo':'#FBEAF0','Orlando':'#E6F1FB','Buenos Aires':'#EEEDFE','Maldivas':'#E1F5EE'};
-function getBadgeStyle(d){const bg=BADGE_BG[d]||'#eee';const c=BADGE_COLORS[d]||'#555';return`background:${bg};color:${c};border:0.5px solid ${c}44`;}
+function getBadgeStyle(d){const bg=BADGE_BG[d]||'#f5f5f3';const c=BADGE_COLORS[d]||'#6b6b67';return`background:${bg};color:${c};border:0.5px solid ${c}44`;}
 
-const DRIVE_FILE='agenda_rebeca_dados.json';
-const CLIENT_ID='505705256831-b36eubjibrmobdd0pdm606cslnt20h21.apps.googleusercontent.com';
-const SCOPES='https://www.googleapis.com/auth/drive.file';
-
-let clients=[], driveFileId=null, dragSrcId=null, saveTimer=null;
-let tokenClient=null, accessToken=null;
+let clients=[], driveFileId=null, dragSrcId=null, saveTimer=null, accessToken=null;
 
 function hasPending(c){return c.tarefas.some(t=>!t.done&&t.text.trim());}
 function calcTotal(c){return MESES.reduce((a,m)=>{const v=parseFloat((c.fat[m.k]||'').replace(',','.'));return a+(isNaN(v)?0:v);},0);}
@@ -176,33 +159,53 @@ function setStatus(state,msg){
   const dot=document.getElementById('sync-dot');
   const txt=document.getElementById('sync-msg');
   if(dot)dot.className='sync-dot '+state;
-  if(txt)txt.textContent=msg;
+  if(txt)txt.innerHTML=msg;
+}
+function showLoginBanner(show){
+  const b=document.getElementById('login-banner');
+  if(b)b.style.display=show?'flex':'none';
+}
+
+function doLogin(){
+  const url='https://accounts.google.com/o/oauth2/v2/auth'
+    +'?client_id='+encodeURIComponent(CLIENT_ID)
+    +'&redirect_uri='+encodeURIComponent(REDIRECT_URI)
+    +'&response_type=token'
+    +'&scope='+encodeURIComponent(SCOPES)
+    +'&prompt=select_account';
+  window.location.href=url;
+}
+
+function handleRedirect(){
+  const hash=window.location.hash.substring(1);
+  if(!hash)return false;
+  const params=new URLSearchParams(hash);
+  const token=params.get('access_token');
+  if(!token)return false;
+  accessToken=token;
+  const exp=Date.now()+3500*1000;
+  try{localStorage.setItem('ar_token',token);localStorage.setItem('ar_token_exp',String(exp));}catch(e){}
+  history.replaceState(null,'',window.location.pathname);
+  return true;
+}
+
+function loadToken(){
+  try{
+    const token=localStorage.getItem('ar_token');
+    const exp=parseInt(localStorage.getItem('ar_token_exp')||'0');
+    if(token&&Date.now()<exp){accessToken=token;return true;}
+  }catch(e){}
+  accessToken=null;return false;
 }
 
 async function callDrive(method,url,body,ct){
   const headers={'Authorization':'Bearer '+accessToken};
   if(ct)headers['Content-Type']=ct;
   const r=await fetch(url,{method,headers,body:body||undefined});
-  if(r.status===401){accessToken=null;throw new Error('auth');}
+  if(r.status===401){accessToken=null;try{localStorage.removeItem('ar_token');}catch(e){}throw new Error('auth_expired');}
   if(!r.ok){const t=await r.text();throw new Error(r.status+': '+t);}
   const c=r.headers.get('content-type')||'';
   return c.includes('application/json')?r.json():r.text();
-}
-
-async function ensureAuth(){
-  if(accessToken)return;
-  return new Promise((resolve,reject)=>{
-    if(!tokenClient){
-      setStatus('error','Configure seu CLIENT_ID do Google no arquivo HTML.');
-      reject(new Error('No client ID'));return;
-    }
-    tokenClient.callback=(resp)=>{
-      if(resp.error){reject(resp);return;}
-      accessToken=resp.access_token;
-      resolve();
-    };
-    tokenClient.requestAccessToken({prompt:''});
-  });
 }
 
 async function findOrCreateFile(){
@@ -217,11 +220,15 @@ async function findOrCreateFile(){
 }
 
 async function loadFromDrive(){
-  setStatus('syncing','Conectando ao Google Drive...');
-  const btn=document.getElementById('btn-sync');
-  if(btn)btn.disabled=true;
+  if(!accessToken){
+    setStatus('','');showLoginBanner(true);
+    try{const d=localStorage.getItem('agenda_rebeca');if(d)clients=JSON.parse(d);}catch(e){}
+    renderList();return;
+  }
+  showLoginBanner(false);
+  setStatus('syncing','<span class="spinner"></span>Conectando ao Drive...');
+  const btn=document.getElementById('btn-sync');if(btn)btn.disabled=true;
   try{
-    await ensureAuth();
     const status=await findOrCreateFile();
     const data=await callDrive('GET','https://www.googleapis.com/drive/v3/files/'+driveFileId+'?alt=media');
     const parsed=typeof data==='string'?JSON.parse(data):data;
@@ -230,11 +237,8 @@ async function loadFromDrive(){
     const now=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
     setStatus('ok',(status==='created'?'Arquivo criado no Drive':'Sincronizado')+' — '+now);
   }catch(e){
-    if(e.message==='auth'||e.message==='No client ID'){
-      setStatus('error','Faça login para sincronizar. Usando dados locais.');
-    }else{
-      setStatus('error','Drive indisponível — usando dados locais.');
-    }
+    if(e.message==='auth_expired'){setStatus('error','Sessão expirada — faça login novamente');showLoginBanner(true);}
+    else{setStatus('error','Erro ao conectar ao Drive');}
     try{const d=localStorage.getItem('agenda_rebeca');if(d)clients=JSON.parse(d);}catch(ex){}
   }finally{
     if(btn)btn.disabled=false;
@@ -256,7 +260,8 @@ async function saveToDrive(){
     const now=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
     setStatus('ok','Salvo no Drive — '+now);
   }catch(e){
-    setStatus('error','Erro ao salvar: '+e.message);
+    if(e.message==='auth_expired'){showLoginBanner(true);}
+    setStatus('error','Erro ao salvar');
   }finally{
     if(btn)btn.disabled=false;
   }
@@ -324,14 +329,14 @@ function renderCard(c,idx,tot){
     ondragstart="onDragStart(event,${c.id})" ondragover="onDragOver(event,${c.id})"
     ondragleave="onDragLeave(event,${c.id})" ondrop="onDrop(event,${c.id})" ondragend="onDragEnd()">
     <div class="card-header">
-      <div class="drag-handle" title="Arraste para reordenar"><span></span><span></span><span></span></div>
+      <div class="drag-handle"><span></span><span></span><span></span></div>
       <div class="card-header-click" onclick="toggleCard(${c.id})">
         <div class="status-dot ${pending?'pending':'ok'}"></div>
         <div style="flex:1;min-width:0">
-          <div class="client-name">${esc(c.agencia)||'<span style="opacity:0.4;font-weight:400">Nova agência</span>'}</div>
+          <div class="client-name">${esc(c.agencia)||'<span style="color:#a0a09c;font-weight:400">Nova agência</span>'}</div>
           <div class="client-meta">${c.contato?`<span class="client-agency">${esc(c.contato)}</span>`:''}${badgesHtml}</div>
         </div>
-        ${total>0?`<div style="font-size:13px;color:var(--text2);margin-right:8px;white-space:nowrap">${fmtBRL(total)}</div>`:''}
+        ${total>0?`<div style="font-size:13px;color:#6b6b67;margin-right:8px;white-space:nowrap">${fmtBRL(total)}</div>`:''}
         <div class="toggle-icon ${c.expanded?'open':''}">▼</div>
       </div>
       <div class="move-btns">
@@ -357,7 +362,7 @@ function renderCard(c,idx,tot){
         <div class="field-group full">
           <label class="field-label">Faturamento — 1º semestre (R$)</label>
           <div class="fat-row">${renderFatRow(MESES_S1,c)}</div>
-          <label class="field-label" style="margin-top:12px">Faturamento — 2º semestre (R$)</label>
+          <label class="field-label" style="margin-top:10px">Faturamento — 2º semestre (R$)</label>
           <div class="fat-row">${renderFatRow(MESES_S2,c)}</div>
           <div class="fat-total">Total anual acumulado: <strong>${fmtBRL(total)}</strong></div>
         </div>
@@ -365,7 +370,7 @@ function renderCard(c,idx,tot){
         <div class="field-group full"><label class="field-label">Última reunião / link da reunião</label><input class="field-input" data-f="ultima_reuniao" type="text" value="${esc(c.ultima_reuniao)}" placeholder="DD/MM/AAAA ou https://meet.google.com/..."></div>
         <div class="field-group full">
           <label class="field-label" style="display:flex;align-items:center;gap:6px">Tarefas pendentes
-            ${pending?'<span style="background:var(--red-bg);color:var(--red);font-size:10px;padding:2px 7px;border-radius:20px">pendente</span>':''}
+            ${pending?'<span style="background:#FCEBEB;color:#A32D2D;font-size:10px;padding:2px 7px;border-radius:20px;border:0.5px solid #E24B4A">pendente</span>':''}
           </label>
           <div class="tasks-area">${tasksHtml}<button class="add-task-btn" onclick="addTask(${c.id})">+ adicionar tarefa</button></div>
         </div>
@@ -417,12 +422,10 @@ function exportExcel(){
 }
 
 window.addEventListener('load',()=>{
-  if(typeof google!=='undefined'&&google.accounts){
-    tokenClient=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:SCOPES,callback:()=>{}});
-  }
+  const fromRedirect=handleRedirect();
+  if(!fromRedirect)loadToken();
   loadFromDrive();
 });
 </script>
-<script src="https://accounts.google.com/gsi/client" async></script>
 </body>
 </html>
